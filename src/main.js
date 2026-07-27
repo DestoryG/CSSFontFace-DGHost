@@ -9,6 +9,7 @@ function load_script(src, remote = true, transfer = []) {
 }
 
 async function doJb(customPayloadUrl = null) {
+  logger.info(`doJb called with customPayloadUrl: ${customPayloadUrl}`);
   await load_script("src/misc.js");
 
   try {
