@@ -43,17 +43,17 @@ function stopInterval(){
         clearInterval(timerId);
         timerId = null;
     }
-    label.textContent = "Auto Jailbreak";
+    label.textContent = "每次打开网页自动越狱";
 }
 
 function jailbreakCountdown() {   
     stopInterval();
 
     let countdown = 5;
-    label.textContent = `Auto Jailbreaking in: ${countdown}`;
+    label.textContent = `即将在${countdown}秒后自动注入GoldHEN`;
     timerId = setInterval(() => {
         countdown--;
-        label.textContent = `Auto Jailbreaking in: ${countdown}`;
+        label.textContent = `即将在${countdown}秒后自动注入GoldHEN`;
 
         if (countdown < 0) {
             jeilbrekBtn.disabled = true; 
