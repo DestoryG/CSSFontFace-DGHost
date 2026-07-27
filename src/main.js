@@ -117,19 +117,19 @@ async function doJb(customPayloadUrl = null) {
       if (customPayloadUrl) {
         logger.info(`Downloading custom payload from ${customPayloadUrl}...`);
         try {
-          const bin_rsp = await fetch(customPayloadUrl, { cache: "no-cache" });
+          const bin_rsp = await fetch(customPayloadUrl, { cache: "no-cache", mode: "cors" });
+          logger.info(`Fetch response: ${bin_rsp.status} ${bin_rsp.statusText}`);
           if (!bin_rsp.ok) {
             throw new Error(`Failed to download payload: ${bin_rsp.status} ${bin_rsp.statusText}`);
           }
           const bin_buf = await bin_rsp.arrayBuffer();
           bin_u8 = new Uint8Array(bin_buf);
           logger.info(`Custom payload downloaded (${bin_u8.length} bytes)`);
+          logger.info(`Payload first bytes: ${bin_u8[0].toString(16)} ${bin_u8[1].toString(16)} ${bin_u8[2].toString(16)} ${bin_u8[3].toString(16)}`);
         } catch (e) {
           logger.error(`Payload download failed: ${e.message}`);
-          logger.info("Trying fallback to local payload.bin...");
-          const bin_rsp = await fetch("src/payload.bin");
-          const bin_buf = await bin_rsp.arrayBuffer();
-          bin_u8 = new Uint8Array(bin_buf);
+          logger.error(`Stack: ${e.stack}`);
+          throw e;
         }
       } else {
         const bin_rsp = await fetch("src/payload.bin");

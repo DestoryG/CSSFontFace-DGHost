@@ -94,8 +94,24 @@ ps4henBtn.addEventListener("click", async function (e) {
     ps4henBtn.textContent = "正在使用PS4HEN越狱...";
     stopPs4henInterval();
     try {
-        const PS4HEN_URL = "https://v4.gh-proxy.org/https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest/download/hen.bin";
-        await doJb(PS4HEN_URL);
+        // Try multiple URLs for PS4HEN
+        const PS4HEN_URLS = [
+            "https://v4.gh-proxy.org/https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest/download/hen.bin",
+            "https://ghfast.top/https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest/download/hen.bin",
+            "https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest/download/hen.bin"
+        ];
+        let lastError = null;
+        for (const url of PS4HEN_URLS) {
+            try {
+                logger.info(`Trying PS4HEN URL: ${url}`);
+                await doJb(url);
+                return; // Success
+            } catch (e) {
+                logger.error(`URL failed: ${url} - ${e.message}`);
+                lastError = e;
+            }
+        }
+        throw lastError || new Error("All PS4HEN URLs failed");
     } catch (e) {
         logger.error(e.message);
         logger.error(e.stack);

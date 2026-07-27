@@ -32,6 +32,9 @@ fn.kexec = new NativeFunction(0x295, "number");
 //#endregion Constants
 //#region Functions
 function load_bin(data, exit) {
+  logger.info(`load_bin called with ${data.length} bytes`);
+  logger.info(`ELF magic: ${data[0].toString(16)} ${data[1].toString(16)} ${data[2].toString(16)} ${data[3].toString(16)}`);
+  
   const sz = data.length.alignUp(PAGE_SIZE);
   const prot = PROT_READ | PROT_WRITE | PROT_EXEC;
   const flags = MAP_PRIVATE | MAP_ANONYMOUS;
@@ -43,6 +46,7 @@ function load_bin(data, exit) {
   }
 
   mem.copy(entry_addr, data.buffer.data(), data.length);
+  logger.info(`Payload copied to ${entry_addr}`);
 
   const pthread_addr_addr = mem.alloc(8);
 
