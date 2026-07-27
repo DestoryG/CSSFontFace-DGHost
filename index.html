@@ -3,28 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSSFontFace折腾网页</title>
+  <title>CSSFontFace越狱页面</title>
   <link rel="stylesheet" href="includes/style.css">
 </head>
 <body>
 
   <h1>PS4 折腾网页 by DestoryG(目前支持7.00-11.02)</h1>
   <h2>原作者：<a href="https://github.com/ntfargo">ntfargo</a></h2>
-  <h3 id="UA">你的浏览器UA:</h3>
+  <h3 id="UA">Running on:</h3>
 
   <hr>
 
   <div class="btn-container">
     <form id="kernel-options">
       <input type="radio" name="kernel" id="netctrl-exploit" value="netctrl">
-      <label for="netctrl-exploit">NetCtrl（9.00-11.02可用，Lapse不能用的话试试这个）</label>
+      <label for="netctrl-exploit">NetCtrl（不是很稳定，实在用不了Lapse在考虑这个）</label>
       <input type="radio" name="kernel" id="lapse-exploit" value="lapse">
-      <label for="lapse-exploit">Lapse(7.00-11.02选这个)</label>
+      <label for="lapse-exploit">Lapse（推荐使用）</label>
     </form>
-    <button id="jeilbrek">一键越狱</button>
+    <button id="jeilbrek">GoldHEN越狱</button>
+    <button id="ps4hen-btn">PS4HEN越狱</button>
     <div class="autoJb">
-      <label for="autoJbInput" id="autoJbLabel">每次打开网页自动越狱</label>
+      <label for="autoJbInput" id="autoJbLabel">自动使用GoldHEN越狱</label>
       <input class="mt-2" id="autoJbInput" type="checkbox">
+    </div>
+    <div class="autoJb" id="autoPs4henContainer">
+      <label for="autoPs4henInput" id="autoPs4henLabel">自动使用PS4HEN越狱</label>
+      <input class="mt-2" id="autoPs4henInput" type="checkbox">
     </div>
   </div>
 
@@ -33,7 +38,7 @@
       <img src="includes/cat.jpg" alt="A cat staring at you">
     </div>
 
-    <pre id="console">点击“一键越狱”按钮，立刻越狱并注入GoldHEN
+    <pre id="console">点击“越狱”按钮，立刻越狱并注入对应的HEN
   </pre>
 
 

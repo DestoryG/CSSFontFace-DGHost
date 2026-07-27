@@ -40,6 +40,20 @@ button {
     cursor: pointer;
 }
 
+#ps4hen-btn {
+    background: #059669;
+    margin-left: 10px;
+}
+
+#ps4hen-btn:hover {
+    background: #047857;
+}
+
+#ps4hen-btn:disabled {
+    background: #064e3b;
+    cursor: default;
+}
+
 button:disabled, button:hover:disabled {
     background: #0b2253;
     cursor: default;
