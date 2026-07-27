@@ -99,7 +99,11 @@ async function doJb(customPayloadUrl = null) {
 
     find_all_proc();
 
-    if (fn.setuid.invoke(0) === -1) {
+    const setuidResult = fn.setuid.invoke(0);
+    logger.info(`setuid(0) result: ${setuidResult} (${setuidResult === 0 ? 'already root' : 'not root'})`);
+
+    if (setuidResult === -1) {
+      logger.info("Not root, applying jailbreak...");
       jailbreak();
 
       const kpatches_rsp = await fetch(`src/ps4/patches/${constants.KPATCH}`);
@@ -107,24 +111,39 @@ async function doJb(customPayloadUrl = null) {
       const kpatches_u8 = new Uint8Array(kpatches_buf);
 
       kernel_patches(kpatches_u8);
+      logger.info("Kernel patches applied");
 
       let bin_u8;
       if (customPayloadUrl) {
         logger.info(`Downloading custom payload from ${customPayloadUrl}...`);
-        const bin_rsp = await fetch(customPayloadUrl, { cache: "no-cache" });
-        if (!bin_rsp.ok) {
-          throw new Error(`Failed to download payload: ${bin_rsp.status} ${bin_rsp.statusText}`);
+        try {
+          const bin_rsp = await fetch(customPayloadUrl, { cache: "no-cache" });
+          if (!bin_rsp.ok) {
+            throw new Error(`Failed to download payload: ${bin_rsp.status} ${bin_rsp.statusText}`);
+          }
+          const bin_buf = await bin_rsp.arrayBuffer();
+          bin_u8 = new Uint8Array(bin_buf);
+          logger.info(`Custom payload downloaded (${bin_u8.length} bytes)`);
+        } catch (e) {
+          logger.error(`Payload download failed: ${e.message}`);
+          logger.info("Trying fallback to local payload.bin...");
+          const bin_rsp = await fetch("src/payload.bin");
+          const bin_buf = await bin_rsp.arrayBuffer();
+          bin_u8 = new Uint8Array(bin_buf);
         }
-        const bin_buf = await bin_rsp.arrayBuffer();
-        bin_u8 = new Uint8Array(bin_buf);
-        logger.info(`Custom payload downloaded (${bin_u8.length} bytes)`);
       } else {
         const bin_rsp = await fetch("src/payload.bin");
         const bin_buf = await bin_rsp.arrayBuffer();
         bin_u8 = new Uint8Array(bin_buf);
+        logger.info(`Local payload.bin loaded (${bin_u8.length} bytes)`);
       }
 
+      logger.info("Loading payload...");
       load_bin(bin_u8);
+      logger.info("Payload loaded successfully!");
+    } else {
+      logger.info("Already root (jailbreak active), skipping payload injection");
+      logger.info("If you want to reinject payload, please reboot the console first");
     }
 
     logger.info("===END===");
