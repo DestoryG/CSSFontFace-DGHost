@@ -74,7 +74,11 @@ jeilbrekBtn.addEventListener("click", function (e){
     jeilbrekBtn.disabled = true;
     jeilbrekBtn.textContent = "正在使用GoldHEN越狱...";
     stopInterval();
-    doJb().finally(() => {
+    doJb().catch(e => {
+        logger.error(e.message);
+        logger.error(e.stack);
+        alert("GoldHEN Error: " + e.message);
+    }).finally(() => {
         jeilbrekBtn.disabled = false;
         jeilbrekBtn.textContent = "GoldHEN越狱";
     });
