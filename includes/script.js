@@ -79,26 +79,22 @@ jeilbrekBtn.addEventListener("click", function (e){
         jeilbrekBtn.textContent = "GoldHEN越狱";
     });
 });
+});
 
 // PS4HEN execution
 ps4henBtn.addEventListener("click", async function (e) {
-    try {
-        alert("PS4HEN button clicked! Check console for logs.");
-        logger.info("=== PS4HEN button clicked ===");
-        
-        // Confirm if GoldHEN is supported on this firmware
-        if (goldHenSupported) {
-            const confirmMsg = `当前固件版本 ${fwVersion} 支持 GoldHEN。\n\n确定要使用 PS4HEN 吗？\n\n注意：使用 PS4HEN 时，部分功能将不可用：\n- 游戏内金手指菜单\n- FPS 显示/监视\n\n建议使用 "GoldHEN越狱" 以获得完整功能。`;
-            if (!confirm(confirmMsg)) {
-                logger.info("User cancelled PS4HEN");
-                return;
-            }
+    // Confirm if GoldHEN is supported on this firmware
+    if (goldHenSupported) {
+        const confirmMsg = `当前固件版本 ${fwVersion} 支持 GoldHEN。\n\n确定要使用 PS4HEN 吗？\n\n注意：使用 PS4HEN 时，部分功能将不可用：\n- 游戏内金手指菜单\n- FPS 显示/监视\n\n建议使用 "GoldHEN越狱" 以获得完整功能。`;
+        if (!confirm(confirmMsg)) {
+            return;
         }
-        
-        ps4henBtn.disabled = true;
-        ps4henBtn.textContent = "正在使用PS4HEN越狱...";
-        stopPs4henInterval();
-        
+    }
+    
+    ps4henBtn.disabled = true;
+    ps4henBtn.textContent = "正在使用PS4HEN越狱...";
+    stopPs4henInterval();
+    try {
         // Try multiple URLs for PS4HEN - PS4 browser has TLS/CORS restrictions
         const PS4HEN_URLS = [
             "https://ghfast.top/https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest/download/hen.bin",
@@ -110,7 +106,6 @@ ps4henBtn.addEventListener("click", async function (e) {
             try {
                 logger.info(`Trying PS4HEN URL: ${url}`);
                 await doJb(url);
-                logger.info("doJb returned successfully");
                 return; // Success
             } catch (e) {
                 logger.error(`URL failed: ${url} - ${e.message}`);
@@ -215,8 +210,33 @@ function ps4henCountdown() {
             clearInterval(timerId);
             timerId = null;
             ps4henLabel.textContent = 'Executing';
-            const PS4HEN_URL = "https://v4.gh-proxy.org/https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest/download/hen.bin";
-            doJb(PS4HEN_URL);
+            // Use same multi-URL logic as button click
+            (async () => {
+                const PS4HEN_URLS = [
+                    "https://ghfast.top/https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest/download/hen.bin",
+                    "https://mirror.nyc3.cdn.digitaloceanspaces.com/ps4-hen/hen.bin",
+                    "https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest/download/hen.bin"
+                ];
+                let lastError = null;
+                for (const url of PS4HEN_URLS) {
+                    try {
+                        logger.info(`Auto: Trying PS4HEN URL: ${url}`);
+                        await doJb(url);
+                        return;
+                    } catch (e) {
+                        logger.error(`Auto: URL failed: ${url} - ${e.message}`);
+                        lastError = e;
+                    }
+                }
+                logger.info("Auto: All URLs failed, trying local src/ps4hen.bin...");
+                try {
+                    await doJb("src/ps4hen.bin");
+                    return;
+                } catch (e) {
+                    logger.error(`Auto: Local ps4hen.bin also failed: ${e.message}`);
+                }
+                throw lastError || new Error("All PS4HEN sources failed");
+            })();
         }
     }, 1000);
 }
