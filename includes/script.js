@@ -83,7 +83,6 @@ jeilbrekBtn.addEventListener("click", function (e){
         jeilbrekBtn.textContent = "GoldHEN越狱";
     });
 });
-});
 
 // PS4HEN execution
 ps4henBtn.addEventListener("click", async function (e) {
