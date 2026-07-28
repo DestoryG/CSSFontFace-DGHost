@@ -1,6 +1,14 @@
 // GoldHEN supported firmware versions
 const GOLDHEN_SUPPORTED_VERSIONS = ['9.00', '9.60', '10.00', '10.01', '10.50', '10.70', '10.71', '11.00', '11.02'];
 
+// Fallback logger (replaced when misc.js loads)
+const logger = {
+    info(msg) { console.log('[+] ' + msg); },
+    error(msg) { console.error('[-] ' + msg); },
+    debug(msg) { console.log('[*] ' + msg); }
+};
+window.logger = logger;
+
 // Parse firmware version from User Agent
 function parseFirmwareVersion(userAgent) {
     let match = userAgent.match(/PlayStation 4\/([0-9]+\.[0-9]+)/);
