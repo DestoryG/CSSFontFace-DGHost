@@ -1,29 +1,22 @@
-function load_script(src, remote = true, transfer = []) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
+let scriptsLoaded = false;
+
+async function ensureScriptsLoaded() {
+  if (scriptsLoaded) return;
+  await load_script("src/misc.js");
+  await load_script("src/ps4/constants.js");
+  await load_script("src/ps4/userland.js");
+  await load_script("src/loader.js");
+  await load_script("src/workers.js");
+  await load_script("src/ps4/kernel.js");
+  await load_script(`src/${exploitChain}.js`);
+  scriptsLoaded = true;
 }
 
 async function doJb(customPayloadUrl = null) {
-  await load_script("src/misc.js");
+  await ensureScriptsLoaded();
 
   try {
     version.init();
-    switch (version.console) {
-      case 4:
-        await load_script("src/ps4/constants.js");
-        await load_script("src/ps4/userland.js");
-        break;
-      case 5:
-        //TODO
-        break;
-      default:
-        logger.info(`Unsupported console ${version.console}`);
-    }
 
     logger.info("===USERLAND===");
 
@@ -37,22 +30,6 @@ async function doJb(customPayloadUrl = null) {
     init_syscalls();
 
     logger.info("===END===");
-
-    await load_script("src/loader.js");
-    await load_script("src/workers.js");
-
-    switch (version.console) {
-      case 4:
-        await load_script("src/ps4/kernel.js");
-        break;
-      case 5:
-        //TODO
-        break;
-      default:
-        logger.info(`Unsupported console ${version.console}`);
-    }
-
-    await load_script(`src/${exploitChain}.js`);
 
     logger.info(`===${exploitChain.toUpperCase()}===`);
 
